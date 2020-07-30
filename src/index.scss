@@ -1,0 +1,74 @@
+.todo {
+  margin: 30px 100px;
+  box-sizing: border-box;
+  box-shadow: 1px 2px 20px #f3f3f3;
+  border-radius: 10px;
+  border: 1px solid #f1f1f1;
+  padding: 15px 20px;
+
+  &-header {
+    display: flex;
+
+    h3 {
+      margin-left: 25px;
+    }
+  }
+
+  &-list {
+    h2 {
+      margin-left: 60px;
+    }
+
+    ul {
+      list-style: none;
+      margin-left: -18px;
+
+      li {
+        box-sizing: border-box;
+        width: 415px;
+        margin: 10px 0;
+        display: flex;
+        justify-content: space-between;
+
+        input {
+          margin-right: 10px;
+        }
+        i {
+          border: 1px solid #E6D5D5;
+          border-radius: 3px;
+          padding: 3px;
+          margin-right: 10px;
+          cursor: pointer;
+          font-style: normal;
+          font-weight: bold;
+        }
+      }
+    }
+
+    .completed {
+      text-decoration: line-through;
+    }
+  }
+
+  &-input {
+    display: flex;
+    flex-direction: column;
+    margin-left: 25px;
+
+    &-buttons {
+      padding: 15px 0;
+      button {
+        margin-top: 7px;
+        margin-right: 5px;
+        padding: 3px;
+        width: 200px;
+        cursor: pointer;
+      }
+    }
+
+    input {
+      max-width: 250px;
+    }
+  }
+
+}

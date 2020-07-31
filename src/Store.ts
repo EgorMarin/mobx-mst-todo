@@ -1,5 +1,11 @@
-import {types, onSnapshot, getSnapshot, flow, applySnapshot} from 'mobx-state-tree'
+import {types, flow, applySnapshot, Instance, cast} from 'mobx-state-tree'
 import axios from 'axios'
+
+export interface ITodo {
+  id: number
+  title: string
+  completed: boolean
+}
 
 //Model
 const TodoModel = types.model('Todo', {
@@ -8,20 +14,20 @@ const TodoModel = types.model('Todo', {
   completed: types.boolean
 })
 .actions(self => ({
-  editTodo(title) {
+  editTodo(title: string) {
     applySnapshot(self, {...self, title})
   }
 }))
 
-const StoreModel = types.model('Store', {
+export const StoreModel = types.model('Store', {
   todos: types.array(TodoModel),
   isLoading: types.boolean
 })
 .actions(self => ({
-  addTodo(todo) {
+  addTodo(todo: ITodo) {
     self.todos.push(todo)
   },
-  onComplete(todoId) {
+  onComplete(todoId: number) {
     self.todos.map(todo => {
       if(todo.id === todoId) {
         todo.completed = !todo.completed
@@ -29,8 +35,8 @@ const StoreModel = types.model('Store', {
       return todo
     })
   },
-  onDelete(todoId) {
-    self.todos = self.todos.filter(todo => todo.id !== todoId)
+  onDelete(todoId: number) {
+    self.todos = cast(self.todos.filter(todo => todo.id !== todoId))
   },
   fetchFakeTodos: flow(function* fetchFakeTodos() {
     self.isLoading = true
@@ -38,11 +44,11 @@ const StoreModel = types.model('Store', {
     self.todos = data 
     self.isLoading = false   
   }),
-  saveTodos(todos) {
+  saveTodos(todos: ITodo[]) {
     localStorage.setItem('todos', JSON.stringify(todos))
   },
   getTodos() {
-    self.todos = JSON.parse(localStorage.getItem('todos'))
+    self.todos = JSON.parse(localStorage.getItem('todos')!)
   }
 }))
 .views(self => ({
@@ -53,7 +59,7 @@ const StoreModel = types.model('Store', {
     return self.todos.filter(todo => todo.completed).length
   },
   //теряется мемоизация при передаче пар-ров => rerender
-  unCompletedTasks(boolValue) {
+  unCompletedTasks(boolValue: boolean) {
     return self.todos.filter(todo => todo.completed === boolValue).length
   }
 }))
@@ -65,11 +71,4 @@ export const store = StoreModel.create({
   isLoading: false
 })
 
-//делает снимок store при каждом его изменении
-onSnapshot(store, (snapshot) => {
-  console.log('snapshot', snapshot);
-})
-
-//вызывается один раз и показывает снимок store
-const currentStore = getSnapshot(store)
-console.log('currentStore', currentStore);
+export type StoreInstance = Instance<typeof StoreModel>
